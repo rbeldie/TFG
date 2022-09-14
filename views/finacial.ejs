@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"></head>
+    <link rel="stylesheet" href="./styles/styles.css">
+<body class="container">
+    <header>
+        <h1 class="title is-1">
+            Finaciero
+        </h1>
+    </header>
+    <p class="subtitle is-3">Proyectos
+        <div class="has-text-danger">
+            <%= (error !=null) ? error: "" %>
+        </div>
+
+        <form action="/config/<%= servicePercentaje._id %>" method="post" style="display: flex;">
+            <label class="label">Servicio central</label>
+            <input 
+              class="input"
+              type="number" 
+              name="value"
+              min="5"
+              max="17"
+              value="<%= servicePercentaje.value %>"  
+            >
+            <button class="button is-primary is-light">Actualizar</button>
+        </form>
+    </p>
+    <div class="is-full columns pb-4">
+
+        <button 
+            class="button is-primary is-light js-modal-trigger" 
+            data-target="modal-project"
+        >
+        Añadir Proyecto
+
+        </button>
+        <form action="/financiero" method="get">
+            <input 
+                type="text"
+                class="input column"
+                placeholder="Nombre del Proyecto o Codigo"
+                name="codeOrName"
+            >
+        </form>
+    </div>
+
+    <div id="modal-project" class="modal">
+        <div class="modal-background"></div>
+      
+        <div class="modal-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Añadir Proyecto</p>
+            <button class="delete" aria-label="close"></button>
+            </header>
+          <div class="modal-card-body">
+            <form class="is-half" method="post" action="/projects" enctype="application/x-www-form-urlencoded">
+                <label class="label">Nombre</label>
+                <input 
+                  class="input"
+                  type="text" 
+                  name="name"
+                  required  
+                  placeholder="Proyecto ----"
+                >
+                <label class="label">Presupuesto</label>
+                <input 
+                  class="input"
+                  type="number" 
+                  name="budget"
+                  required 
+                  placeholder="10000"
+
+                >
+                <label class="label">Codigo</label>
+                <input 
+                    class="input"
+                    type="text" 
+                    name="code"
+                    required  
+                    placeholder="AG-200"
+                >
+                <label for="" class="label">Fecha de inicio</label>
+                <input 
+                    class="input"
+                    type="date" 
+                    name="startDate"
+                    required
+                    placeholder="01/01/2022"
+                >
+                <label for="" class="label">Fecha de fin</label>
+                <input 
+                    class="input"
+                    type="date" 
+                    name="endDate"
+                    required
+                    placeholder="31/12/2022"
+
+                >
+                <label for="" class="label">Coordinador del Proyecto</label>
+
+                <div class="select is-fullwidth">
+                    <select name="coordinator" id="">
+                        <% for(let i=0; i<coordinators.length; i++) { %>
+                            <option value="<%= coordinators[i].name %>">
+                                <%= coordinators[i].name %>
+                            </option>
+                        <% } %>
+                    </select>
+                </div>
+                <button class="button is-primary is-light">Añadir</button>
+
+              </form>
+          </div>
+        </div>
+    </div>
+
+    <div class="columns">
+        <div class="column">
+            Nombre
+        </div>
+        <div class="column">
+            Código
+        </div>
+        <div class="column">
+            Presupuesto
+        </div>
+
+        <div class="column">
+            Fecha de Incio
+        </div>
+        <div class="column">
+            Fecha de Finalización
+        </div>
+        <div class="column">
+            Coordinador
+        </div>
+        <div class="column">
+            Acciones
+        </div>
+    </div>
+    
+    <% for(let i=0; i<projects.length; i++) { %>
+        <details>
+            <summary>
+                <div class="columns ">
+                    <div class="column"><%= projects[i].name %></div>
+                    <div class="column"><%= projects[i].code %></div>
+                    <div class="column"><%= projects[i].budget  %></div>
+                    <div class="column"><%= projects[i].startDate ? projects[i].startDate : ''  %></div>
+                    <div class="column"> <%= projects[i].endDate ? projects[i].endDate :'' %> </div>
+                    <div class="column"> <%= projects[i].coordinator.name  %> </div>
+
+
+                    <div class="column">
+                        <button class="button is-danger delete-project" data-id="<%= projects[i]._id %>">
+                            Borrar
+                        </button>
+                        
+                        <button
+                            class="button is-warning js-modal-trigger" 
+                            data-target="modal-cost-<%= projects[i].code %>">
+                            Añadir coste
+                        </button>
+                        <a class="button is-primary" href="/projects/<%= projects[i]._id %>">
+                            Informe
+                        </a>
+                    </div>
+                    <div id="modal-cost-<%= projects[i].code %>" class="modal">
+                        <div class="modal-background"></div>
+                      
+                        <div class="modal-content">
+                          <div class="box">
+                            <form class="is-half" method="post" action="/projects/<%= projects[i]._id %>/costs" enctype="application/x-www-form-urlencoded">
+                                <label class="label">Denominación</label>
+                                <input 
+                                  class="input"
+                                  type="text" 
+                                  name="name"  
+                                  required
+                                  placeholder="Factura de MAyo"
+                                >
+                                <label class="label">Gasto</label>
+                                <input 
+                                  class="input"
+                                  type="number" 
+                                  name="cost"  
+                                  required
+                                  placeholder="200"
+                                >
+                                <button class="button is-primary is-light">Añadir</button>
+                              </form>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+            </summary>
+            <form action="/projects/<%= projects[i]._id %>" method="post">
+                <label class="label">Nombre</label>
+                <input 
+                    class="input"
+                    type="text" 
+                    name="name"  
+                    value="<%= projects[i].name %>"
+                    required
+                >
+
+                <label class="label">Codigo</label>
+                <input 
+                    class="input"
+                    type="text" 
+                    name="code"  
+                    value="<%= projects[i].code %>"
+                    required
+                >
+
+                <label class="label">Presupuesto</label>
+                <input 
+                    class="input"
+                    type="text" 
+                    name="budget"  
+                    value="<%= projects[i].budget %>"
+                    required
+                >
+                <label for="" class="label">Fecha de inicio</label>
+                <input 
+                    class="input"
+                    type="date" 
+                    name="startDate"
+                    value="<%= projects[i].startDate %>"
+                    required
+                >
+
+                <label for="" class="label">Fecha de fin</label>
+                <input 
+                    class="input"
+                    type="date" 
+                    name="endDate"
+                    value="<%= projects[i].endDate %>"
+                    required
+
+                >
+                <div class="select is-fullwidth">
+                    <label class="label">Coordinador</label>
+                    <select name="coordinator" id="" required>
+                        <% for(let j=0; j<coordinators.length; j++) { %>
+                            <% if(coordinators[j].name == projects[i].coordinator.name) {%>
+                                <option selected value="<%= coordinators[j].name  %>">
+                                    <%= coordinators[j].name  %>
+                                </option>                                
+                            <% }else{ %>
+                                <option value="<%= coordinators[j].name %>">
+                                    <%= coordinators[j].name %>
+                                </option>
+                            <% } %>
+                        <% } %>
+                    </select>
+                </div>
+
+
+                <button class="button is-primary mt-6 -mb-6">
+                    Editar
+                </button>
+
+            </form>
+        </details>
+    <% } %>
+
+</body>
+
+<script src="scripts/modal.js"></script>
+<script>
+    document.querySelectorAll(".delete-project").forEach(deleteBtn =>{
+        deleteBtn.addEventListener('click', async () =>{
+            let id = deleteBtn.dataset.id
+
+            let response = await fetch(`/projects/${id}`,{method:"DELETE"})
+            if(response.redirected){
+                window.location.replace(response.url)
+            }
+        })
+    })
+</script>
+
+</html>

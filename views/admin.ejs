@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Project </title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+        <link rel="stylesheet" href="./styles/styles.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    </head>
+    <body class="container">
+        <h1>Panel de Adminsitración</h1>
+        <h2>Usuarios</h2>
+        <div class="columns">
+            <div class="column">Nombre</div>
+            <div class="column">Contraseña</div>
+            <div class="column">Acciones</div>
+        </div>
+        <% for(let i = 0; i<workers.length;i++) { %>
+            <form action="/workers/<%= workers[i].dni %>" method="post" style="display: flex;" class="columns">
+                <div class="column">
+                    <input 
+                        class="input"
+                        type="text" 
+                        name="name"  
+                        value="<%= workers[i].name %>"
+                    >
+                </div>
+                <div class="column" style="display: flex">
+                    <input 
+                        class="input"
+                        type="password" 
+                        name="pwd"  
+                        value="<%= workers[i].pwd %>"
+                    >
+                </div>
+
+
+                <button class="button is-primary column">
+                    Editar
+                </button>
+
+            </form>
+        <% } %>
+
+
+        <h2>Configuración General</h2>
+        <div class="columns">
+            <div class="column">Configuracion</div>
+            <div class="column">Descripcion</div>
+            <div class="column">Porcentaje</div>
+            <div class="column"></div>
+        </div>
+        <% for(let i = 0; i<configs.length;i++) { %>
+            <form action="/configs/<%= configs[i]._id %>" method="post" style="display: flex;" class="columns">
+                <div class="column">
+                    <input 
+                        class="input"
+                        type="text" 
+                        name="name"  
+                        value="<%= configs[i].name %>"
+                    >
+                </div>
+                <div class="column">
+                    <input 
+                        class="input"
+                        type="text" 
+                        value="<%= configs[i].description %>"
+                    >
+                </div>
+                <div class="column">
+                    <input 
+                        class="input"
+                        type="number" 
+                        name="value"  
+                        value="<%= configs[i].value %>"
+                    >
+                </div>
+                <button class="button is-primary column">
+                    Editar
+                </button>
+
+            </form>
+        <% } %>
+    </body>
+</html>

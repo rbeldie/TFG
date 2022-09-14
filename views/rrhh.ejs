@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Project </title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css"></head>
+    <link rel="stylesheet" href="./styles/styles.css">
+<body class="container">
+
+    <header>
+        <h1 class="title is-1">
+            Recursos Humanos
+        </h1>
+    </header>
+    <p class="subtitle is-3">Trabajadores</p>
+
+    <div class="has-text-danger">
+        <%= (error !=null) ? error: "" %>
+    </div>
+    <div class="is-full columns pb-4">
+        <button 
+            class="button is-primary is-light js-modal-trigger column" 
+            data-target="modal-worker"
+            >Añadir Trabajador
+        </button>
+        <form action="/rrhh" method="get">
+            <input 
+                type="text"
+                class="input column"
+                placeholder="Busqueda por nombre o DNI"
+                name="dniOrName"
+            >
+        </form>
+    </div>
+    <div id="modal-worker" class="modal">
+        <div class="modal-background"></div>
+      
+        <div class="modal-content">
+          <div class="box">
+
+            <form class="is-half" method="post" action="/workers" enctype="application/x-www-form-urlencoded">
+                <label class="label">Nombre</label>
+                <input 
+                  class="input"
+                  type="text" 
+                  name="name"  
+                  required
+                  placeholder="Maria Agustina de Todos los Santos Quintana"
+                >
+                <label class="label">DNI</label>
+                <input 
+                  class="input"
+                  type="text" 
+                  name="dni"  
+                  required
+                  placeholder="123456789A"
+
+                >
+                <label class="label">Categoria</label>
+                <div class="select">
+                    <select name="categoryName" id="" required>
+                        <% for(let i=0; i<categories.length; i++) { %>
+                            <option value="<%= categories[i].name %>">
+                                <%= categories[i].name %>
+                            </option>
+                        <% } %>
+    
+                    </select>
+                </div>
+                <label class="label">Duración del trabajador</label>
+                <input 
+                  class="input"
+                  type="number" 
+                  name="timeToWork"  
+                  required
+                  placeholder="400"
+                >
+                <button class="button is-primary is-light">Añadir</button>
+              </form>
+          </div>
+        </div>
+      
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+    <div class="columns">
+        <div class="column">
+            Trabajador
+        </div>
+        <div class="column">
+            DNI
+        </div>
+        <div class="column">
+            Categoria
+        </div>
+        <div class="column">
+            Proyecto
+        </div>
+        <div class="column">
+            Tiempo
+        </div>
+        <div class="column">
+            Acciones
+        </div>
+    </div>
+
+    <% for(let i=0; i<workers.length; i++) { %>
+        <details>
+            <summary>
+                <div class="columns data">
+                    <div class="column"><%= workers[i].name %></div>
+                    <div class="column"><%= workers[i].dni %></div>
+                    <div class="column"><%= workers[i].category? workers[i].category.name : "--"  %></div>
+                    <div class="column">
+                        <% if(workers[i].projects){ %>
+                            <% workers[i].projects.forEach( function (project) { %>
+                                <div>
+                                    <%= project.name %>
+                                </div>
+                            <% }) %>
+                        <% } %>
+                    </div>
+                    <div class="column">
+                        <%= workers[i].timeToWork? workers[i].timeToWork : "--"  %>
+                    </div>
+                    <div class="column">
+                        <button class="button is-danger delete-worker" data-dni="<%= workers[i].dni %>">
+                            Borrar
+                        </button>
+                    </div>
+                </div>
+            </summary>
+            <form action="/workers/<%= workers[i].dni %>" method="post" style="display: flex;">
+                <div class="column">
+                    <label class="label">Nombre</label>
+                    <input 
+                        class="input"
+                        type="text" 
+                        name="name"  
+                        value="<%= workers[i].name %>"
+                        required
+                    >
+                </div>
+
+                <div class="column">
+                    <label class="label">DNI</label>
+                    <input 
+                        class="input"
+                        type="text" 
+                        name="dni"  
+                        value="<%= workers[i].dni %>"
+                        required
+                    >
+                </div>
+                <div class="column">
+                    <label class="label">Categoria</label>
+                    <div class="select">
+                        <select name="categoryName" id="" required>
+                            <% for(let j=0; j<categories.length; j++) { %>
+                                <% if(workers[i].category && categories[j].name == workers[i].category.name) {%>
+                                    <option selected value="<%= categories[j].name %>">
+                                        <%= categories[j].name %>
+                                    </option>                                
+                                <% }else{ %>
+                                    <option value="<%= categories[j].name %>">
+                                        <%= categories[j].name %>
+                                    </option>
+                                <% } %>
+                            <% } %>
+                        </select>
+                    </div>
+                </div>
+                <div class="column">
+                    <label class="label">Proyectos</label>
+                    <% if( workers[i].category && workers[i].category.name == 'Jefe de Proyecto') { %>
+                        <div class="select is-multiple">
+                            <select multiple name="projectName" required>
+
+                                <% for( let j=0; j< workers[i].projects; j++) {%>
+                                    <option selected value="<%= workers[i].projects[j].name %>" >
+                                        <%= workers[i].projects[j].code %> - <%= workers[i].projects[j].name  %>
+                                    </option>       
+                                <%}%>
+                                <% for(let j=0; j<project.length; j++) { %>
+                                    <% if( workers[i].projects  &&
+                                            !workers[i].projects.includes(project[j]) 
+                                        ){%>
+                                        <option value="<%= project[j].name %>">
+                                            <%= project[j].code %> - <%= project[j].name %>
+                                        </option>                              
+                                    <% } %>
+                                <% } %>
+                            </select>
+                        </div>
+                    <% } else{ %>
+                        <div class="select">
+                            <select name="projectName" id="">
+                                <% for(let j=0; j<project.length; j++) { %>
+                                    <% if( workers[i].projects.length != 0  && project[j].name == workers[i].projects[0].name) {%>
+                                        <option selected value="<%= project[j].name %>">
+                                            <%= project[j].code %> - <%= project[j].name %>
+                                        </option>                                
+                                    <% }else{ %>
+                                        <option value="<%= project[j].name %>">
+                                            <%= project[j].code %> - <%= project[j].name %>
+                                        </option>
+                                    <% } %>
+                                <% } %>
+                            </select>
+                        </div>
+                    <% } %>
+                </div>
+                <div class="column">
+                    <label class="label">Duración del trabajador</label>
+                    <input 
+                        class="input"
+                        type="number" 
+                        name="timeToWork"  
+                        value="<%= workers[i].timeToWork %>"
+                        required
+                    >
+                </div>
+                <div class="column">
+                    <label class="label"></label>
+                    <button class="button is-primary">
+                        Editar
+                    </button>
+                </div>
+            </form>
+        </details>
+    <% } %>
+        
+    <p class="subtitle is-3">Categorias Laborales</p>
+
+    <div class="is-full columns pb-4">
+        <button class="button is-primary is-light js-modal-trigger" 
+            data-target="modal-category"
+        >
+            Añadir Categoria
+        </button>
+        <form action="/rrhh" method="get">
+            <input 
+                type="text"
+                class="input column"
+                placeholder="Busqueda por Categoria"
+                name="categoryName"
+            >
+        </form>
+    </div>
+
+    <div id="modal-category" class="modal">
+        <div class="modal-background"></div>
+      
+        <div class="modal-content">
+          <div class="box">
+            <form class="is-half" method="post" action="/category" enctype="application/x-www-form-urlencoded">
+                <label class="label">Categoria Nueva</label>
+                <input 
+                  class="input"
+                  type="text" 
+                  name="name"
+                  required  
+                  placeholder="Trabajdor externo"
+                >
+                <label class="label">Coste Euros/hora</label>
+                <input 
+                  class="input"
+                  type="number" 
+                  name="cost"  
+                  required
+                  placeholder="10"
+                >
+                <button class="button is-primary is-light">Añadir </button>
+              </form>
+          </div>
+        </div>
+    
+        <button class="modal-close is-large" aria-label="close"></button>
+    </div>
+
+    <div class="columns">
+        <div class="column">Categoria</div>
+        <div class="column">Coste euro/hora</div>
+        <div class="column"></div>
+    </div>
+    <% for(let i=0; i<categories.length; i++) { %>
+        <details>
+            <summary class="columns">
+                <div class="column"><%= categories[i].name %></div>
+                <div class="column"><%= categories[i].cost %></div>
+
+                <button class="button is-danger delete-category column" data-id="<%= categories[i]._id %>">
+                    Borrar
+                </button>
+            </summary>
+            <form action="/category/<%= categories[i]._id %>" method="post" style="display: flex;">
+                <div class="column">
+                    <label class="label">Categoria</label>
+                    <input 
+                        class="input"
+                        type="text" 
+                        name="name"  
+                        value="<%= categories[i].name %>"
+                        required
+                    >
+                </div>
+                <div class="column">
+                    <label class="label">Coste Euro/hora</label>
+                    <input 
+                        class="input"
+                        type="number" 
+                        name="cost"  
+                        value="<%= categories[i].cost %>"
+                        required
+                    >
+                </div>
+
+                <div class="column">
+                    <label class="label"></label>
+
+                    <button class="button is-primary">
+                        Editar
+                    </button>
+                </div>
+
+
+
+            </form>
+        </details>
+        <% } %>
+</body>
+
+<script src="scripts/modal.js"></script>
+<script>
+    document.querySelectorAll(".delete-worker").forEach(deleteBtn =>{
+        deleteBtn.addEventListener('click', async () =>{
+            let dni = deleteBtn.dataset.dni
+
+            let response = await fetch(`/workers/${dni}`,{method:"DELETE"})
+            
+            if(response.redirected){
+                window.location.replace(response.url)
+            }
+        })
+    })
+
+    document.querySelectorAll(".delete-category").forEach(deleteBtn =>{
+        deleteBtn.addEventListener('click', async () =>{
+            let id = deleteBtn.dataset.id
+            let response = await fetch(`/category/${id}`,{method:"DELETE"})
+            if(response.redirected){
+                window.location.replace(response.url)
+            }
+        })
+    })
+</script>
+
+</html>

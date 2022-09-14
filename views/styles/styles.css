@@ -1,0 +1,33 @@
+details > summary {
+  list-style: none;
+  cursor: pointer;
+}
+
+details > form {
+    border-bottom: 2px solid #474747;
+
+}
+
+.subtitle{
+    margin-top: 25px;
+}
+
+details > summary::marker, /* Latest Chrome, Edge, Firefox */ 
+details > summary::-webkit-details-marker /* Safari */ {
+  display: none;
+}
+.columns{
+    border-bottom: 2px solid #474747;
+    margin-top: 0;
+}
+details > summary > .columns:last-child{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+input:invalid{
+  border: 2px solid red
+}
+input:placeholder-shown {
+  border: none;
+}
